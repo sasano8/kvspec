@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package keyvaluestore;
+
+// サービス定義
+service KeyValueStore {
+  rpc WriteBytes (WriteBytesRequest) returns (WriteBytesReply) {}
+  rpc ReadBytes (ReadBytesRequest) returns (ReadBytesReply) {}
+}
+
+message WriteBytesRequest {
+  string key = 1;
+  bytes value = 2;
+}
+
+message WriteBytesReply {
+  string key = 1;
+}
+
+message ReadBytesRequest {
+  string key = 1;
+}
+
+message ReadBytesReply {
+  bytes value = 1;
+}
