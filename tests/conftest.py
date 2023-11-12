@@ -1,6 +1,6 @@
 import pytest
 
-from kvspec import factory, storage
+from kvspec import factory, backends
 
 
 @pytest.fixture(scope="module")
@@ -12,7 +12,7 @@ def local_storage():
     if not os.path.exists(TEST_STORAGE):
         os.makedirs(TEST_STORAGE, exist_ok=True)
     
-    yield storage.LocalStorageClient(TEST_STORAGE)
+    yield backends.LocalStorageClient(TEST_STORAGE)
     
 
 @pytest.fixture(scope="module")
