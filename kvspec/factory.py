@@ -17,12 +17,12 @@ class KeyValueStoreGrpcClient:
     def get_schema():
         return schema
         
-    def write_bytes(self, key: str, value: bytes) -> str:
-        response = self.stub.WriteBytes(schema.WriteBytesRequest(key=key, value=value))
+    def put_bytes(self, key: str, value: bytes) -> str:
+        response = self.stub.PutBytes(schema.PutBytesRequest(key=key, value=value))
         return response.key
     
-    def read_bytes(self, key: str):
-        response = self.stub.ReadBytes(schema.ReadBytesRequest(key=key))
+    def get_bytes(self, key: str):
+        response = self.stub.GetBytes(schema.GetBytesRequest(key=key))
         return response.value
 
 

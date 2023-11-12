@@ -15,15 +15,15 @@ class KeyValueStoreStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.WriteBytes = channel.unary_unary(
-                '/keyvaluestore.KeyValueStore/WriteBytes',
-                request_serializer=keyvalue__pb2.WriteBytesRequest.SerializeToString,
-                response_deserializer=keyvalue__pb2.WriteBytesReply.FromString,
+        self.PutBytes = channel.unary_unary(
+                '/keyvaluestore.KeyValueStore/PutBytes',
+                request_serializer=keyvalue__pb2.PutBytesRequest.SerializeToString,
+                response_deserializer=keyvalue__pb2.PutBytesReply.FromString,
                 )
-        self.ReadBytes = channel.unary_unary(
-                '/keyvaluestore.KeyValueStore/ReadBytes',
-                request_serializer=keyvalue__pb2.ReadBytesRequest.SerializeToString,
-                response_deserializer=keyvalue__pb2.ReadBytesReply.FromString,
+        self.GetBytes = channel.unary_unary(
+                '/keyvaluestore.KeyValueStore/GetBytes',
+                request_serializer=keyvalue__pb2.GetBytesRequest.SerializeToString,
+                response_deserializer=keyvalue__pb2.GetBytesReply.FromString,
                 )
 
 
@@ -31,13 +31,13 @@ class KeyValueStoreServicer(object):
     """Interface for key-value store
     """
 
-    def WriteBytes(self, request, context):
+    def PutBytes(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def ReadBytes(self, request, context):
+    def GetBytes(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -46,15 +46,15 @@ class KeyValueStoreServicer(object):
 
 def add_KeyValueStoreServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'WriteBytes': grpc.unary_unary_rpc_method_handler(
-                    servicer.WriteBytes,
-                    request_deserializer=keyvalue__pb2.WriteBytesRequest.FromString,
-                    response_serializer=keyvalue__pb2.WriteBytesReply.SerializeToString,
+            'PutBytes': grpc.unary_unary_rpc_method_handler(
+                    servicer.PutBytes,
+                    request_deserializer=keyvalue__pb2.PutBytesRequest.FromString,
+                    response_serializer=keyvalue__pb2.PutBytesReply.SerializeToString,
             ),
-            'ReadBytes': grpc.unary_unary_rpc_method_handler(
-                    servicer.ReadBytes,
-                    request_deserializer=keyvalue__pb2.ReadBytesRequest.FromString,
-                    response_serializer=keyvalue__pb2.ReadBytesReply.SerializeToString,
+            'GetBytes': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetBytes,
+                    request_deserializer=keyvalue__pb2.GetBytesRequest.FromString,
+                    response_serializer=keyvalue__pb2.GetBytesReply.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -68,7 +68,7 @@ class KeyValueStore(object):
     """
 
     @staticmethod
-    def WriteBytes(request,
+    def PutBytes(request,
             target,
             options=(),
             channel_credentials=None,
@@ -78,14 +78,14 @@ class KeyValueStore(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/keyvaluestore.KeyValueStore/WriteBytes',
-            keyvalue__pb2.WriteBytesRequest.SerializeToString,
-            keyvalue__pb2.WriteBytesReply.FromString,
+        return grpc.experimental.unary_unary(request, target, '/keyvaluestore.KeyValueStore/PutBytes',
+            keyvalue__pb2.PutBytesRequest.SerializeToString,
+            keyvalue__pb2.PutBytesReply.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def ReadBytes(request,
+    def GetBytes(request,
             target,
             options=(),
             channel_credentials=None,
@@ -95,8 +95,8 @@ class KeyValueStore(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/keyvaluestore.KeyValueStore/ReadBytes',
-            keyvalue__pb2.ReadBytesRequest.SerializeToString,
-            keyvalue__pb2.ReadBytesReply.FromString,
+        return grpc.experimental.unary_unary(request, target, '/keyvaluestore.KeyValueStore/GetBytes',
+            keyvalue__pb2.GetBytesRequest.SerializeToString,
+            keyvalue__pb2.GetBytesReply.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

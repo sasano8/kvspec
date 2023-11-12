@@ -13,19 +13,19 @@ class KeyValueClient(ABC):
     def as_writeonly(self):
         return WriteOnlyClient(self)
 
-    def read_bytes(self, key) -> bytes:
+    def get_bytes(self, key) -> bytes:
         raise NotImplementedError()
 
-    def write_bytes(self, key, value: bytes):
+    def put_bytes(self, key, value: bytes):
         raise NotImplementedError()
     
-    def write_bytes_stream(self, stream: Iterable[Tuple[str, bytes]]):
+    def put_bytes_stream(self, stream: Iterable[Tuple[str, bytes]]):
         for key, value in stream:
-            self.write_bytes(key, value)
+            self.put_bytes(key, value)
 
 
 class MockClient(KeyValueClient):
-    def write_bytes(self, key, value: bytes):
+    def put_bytes(self, key, value: bytes):
         ...
         
     def get_substorage(self, relative_path):
@@ -33,7 +33,7 @@ class MockClient(KeyValueClient):
 
 
 class PrintClient(MockClient):
-    def write_bytes(self, key, value: bytes):
+    def put_bytes(self, key, value: bytes):
         print(f"{key} {value}")
 
 
@@ -50,24 +50,24 @@ class WrapperClient(KeyValueClient):
     def as_writeonly(self):
         return WriteOnlyClient(self.client)
 
-    def read_bytes(self, key):
-        return self.client.read_bytes(key)
+    def get_bytes(self, key):
+        return self.client.get_bytes(key)
 
-    def write_bytes(self, key, value: bytes):
-        return self.client.write_bytes(key, value)
+    def put_bytes(self, key, value: bytes):
+        return self.client.put_bytes(key, value)
 
-    def write_bytes_stream(self, stream: Iterable[Tuple[str, bytes]]):
-        return self.client.write_bytes_stream(stream)
+    def put_bytes_stream(self, stream: Iterable[Tuple[str, bytes]]):
+        return self.client.put_bytes_stream(stream)
 
 class ReadOnlyClient(WrapperClient):
-    def write_bytes(self, key, value: bytes):
+    def put_bytes(self, key, value: bytes):
         raise NotImplementedError()
     
-    def write_bytes_stream(self, stream: Iterable[Tuple[str, bytes]]):
+    def put_bytes_stream(self, stream: Iterable[Tuple[str, bytes]]):
         raise NotImplementedError()
 
 class WriteOnlyClient(WrapperClient):
-    def read_bytes(self, key):
+    def get_bytes(self, key):
         raise NotImplementedError()
 
 
@@ -77,17 +77,17 @@ class ThreadSafeDictClient(KeyValueClient):
         self.data = data or {}
         self.lock = threading.Lock()
         
-    def write_bytes(self, key, value: bytes):
+    def put_bytes(self, key, value: bytes):
         if not isinstance(value, bytes):
             raise Exception()
         with self.lock:
             self.data[key] = value
 
-    def read_bytes(self, key):
+    def get_bytes(self, key):
         with self.lock:
             return self.data[key]
 
-    def write_bytes_stream(self, stream: Iterable[Tuple[str, bytes]]):
+    def put_bytes_stream(self, stream: Iterable[Tuple[str, bytes]]):
         with self.lock:
             for key, value in stream:
                 if not isinstance(value, bytes):
@@ -104,7 +104,7 @@ class LocalStorageClient(KeyValueClient):
         import os
         return self.__class__(os.path.join(self.root, relative_path))
 
-    def write_bytes(self, key, value: bytes):
+    def put_bytes(self, key, value: bytes):
         import os
         filepath = os.path.join(self.root, key)
         parent_dir = os.path.dirname(filepath)
@@ -114,7 +114,7 @@ class LocalStorageClient(KeyValueClient):
         with open(filepath, "wb") as f:
             f.write(value)
             
-    def read_bytes(self, key) -> bytes:
+    def get_bytes(self, key) -> bytes:
         import os
         filepath = os.path.join(self.root, key)
         with open(filepath, "rb") as f:

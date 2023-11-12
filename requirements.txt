@@ -1,3 +1,4 @@
 grpcio
 grpcio-tools
-cv2
+opencv-python
+pytest

@@ -4,23 +4,23 @@ package keyvaluestore;
 
 // Interface for key-value store
 service KeyValueStore {
-  rpc WriteBytes (WriteBytesRequest) returns (WriteBytesReply) {}
-  rpc ReadBytes (ReadBytesRequest) returns (ReadBytesReply) {}
+  rpc PutBytes (PutBytesRequest) returns (PutBytesReply) {}
+  rpc GetBytes (GetBytesRequest) returns (GetBytesReply) {}
 }
 
-message WriteBytesRequest {
+message PutBytesRequest {
   string key = 1;
   bytes value = 2;
 }
 
-message WriteBytesReply {
+message PutBytesReply {
   string key = 1;
 }
 
-message ReadBytesRequest {
+message GetBytesRequest {
   string key = 1;
 }
 
-message ReadBytesReply {
+message GetBytesReply {
   bytes value = 1;
 }

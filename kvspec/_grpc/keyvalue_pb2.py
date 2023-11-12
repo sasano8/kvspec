@@ -13,21 +13,21 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0ekeyvalue.proto\x12\rkeyvaluestore\"/\n\x11WriteBytesRequest\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x0c\"\x1e\n\x0fWriteBytesReply\x12\x0b\n\x03key\x18\x01 \x01(\t\"\x1f\n\x10ReadBytesRequest\x12\x0b\n\x03key\x18\x01 \x01(\t\"\x1f\n\x0eReadBytesReply\x12\r\n\x05value\x18\x01 \x01(\x0c\x32\xb0\x01\n\rKeyValueStore\x12P\n\nWriteBytes\x12 .keyvaluestore.WriteBytesRequest\x1a\x1e.keyvaluestore.WriteBytesReply\"\x00\x12M\n\tReadBytes\x12\x1f.keyvaluestore.ReadBytesRequest\x1a\x1d.keyvaluestore.ReadBytesReply\"\x00\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0ekeyvalue.proto\x12\rkeyvaluestore\"-\n\x0fPutBytesRequest\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x0c\"\x1c\n\rPutBytesReply\x12\x0b\n\x03key\x18\x01 \x01(\t\"\x1e\n\x0fGetBytesRequest\x12\x0b\n\x03key\x18\x01 \x01(\t\"\x1e\n\rGetBytesReply\x12\r\n\x05value\x18\x01 \x01(\x0c\x32\xa7\x01\n\rKeyValueStore\x12J\n\x08PutBytes\x12\x1e.keyvaluestore.PutBytesRequest\x1a\x1c.keyvaluestore.PutBytesReply\"\x00\x12J\n\x08GetBytes\x12\x1e.keyvaluestore.GetBytesRequest\x1a\x1c.keyvaluestore.GetBytesReply\"\x00\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'keyvalue_pb2', _globals)
 if _descriptor._USE_C_DESCRIPTORS == False:
   DESCRIPTOR._options = None
-  _globals['_WRITEBYTESREQUEST']._serialized_start=33
-  _globals['_WRITEBYTESREQUEST']._serialized_end=80
-  _globals['_WRITEBYTESREPLY']._serialized_start=82
-  _globals['_WRITEBYTESREPLY']._serialized_end=112
-  _globals['_READBYTESREQUEST']._serialized_start=114
-  _globals['_READBYTESREQUEST']._serialized_end=145
-  _globals['_READBYTESREPLY']._serialized_start=147
-  _globals['_READBYTESREPLY']._serialized_end=178
-  _globals['_KEYVALUESTORE']._serialized_start=181
-  _globals['_KEYVALUESTORE']._serialized_end=357
+  _globals['_PUTBYTESREQUEST']._serialized_start=33
+  _globals['_PUTBYTESREQUEST']._serialized_end=78
+  _globals['_PUTBYTESREPLY']._serialized_start=80
+  _globals['_PUTBYTESREPLY']._serialized_end=108
+  _globals['_GETBYTESREQUEST']._serialized_start=110
+  _globals['_GETBYTESREQUEST']._serialized_end=140
+  _globals['_GETBYTESREPLY']._serialized_start=142
+  _globals['_GETBYTESREPLY']._serialized_end=172
+  _globals['_KEYVALUESTORE']._serialized_start=175
+  _globals['_KEYVALUESTORE']._serialized_end=342
 # @@protoc_insertion_point(module_scope)

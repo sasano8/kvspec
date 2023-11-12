@@ -7,10 +7,10 @@ class KeyValueStoreService(stub.KeyValueStoreServicer):
     def __init__(self, store: KeyValueClient):
         self.store = store
     
-    def WriteBytes(self, request, context):
-        self.store.write_bytes(request.key, request.value)
-        return schema.WriteBytesReply(key=request.key)
+    def PutBytes(self, request, context):
+        self.store.put_bytes(request.key, request.value)
+        return schema.PutBytesReply(key=request.key)
 
-    def ReadBytes(self, request, context):
-        result = self.store.read_bytes(request.key)
-        return schema.ReadBytesReply(value=result)
+    def GetBytes(self, request, context):
+        result = self.store.get_bytes(request.key)
+        return schema.GetBytesReply(value=result)
