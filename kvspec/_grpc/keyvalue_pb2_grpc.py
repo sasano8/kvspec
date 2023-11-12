@@ -25,6 +25,16 @@ class KeyValueStoreStub(object):
                 request_serializer=keyvalue__pb2.GetBytesRequest.SerializeToString,
                 response_deserializer=keyvalue__pb2.GetBytesReply.FromString,
                 )
+        self.PutBytesStream = channel.stream_unary(
+                '/keyvaluestore.KeyValueStore/PutBytesStream',
+                request_serializer=keyvalue__pb2.FileChunk.SerializeToString,
+                response_deserializer=keyvalue__pb2.PutBytesReply.FromString,
+                )
+        self.GetBytesStream = channel.unary_stream(
+                '/keyvaluestore.KeyValueStore/GetBytesStream',
+                request_serializer=keyvalue__pb2.GetBytesRequest.SerializeToString,
+                response_deserializer=keyvalue__pb2.FileChunk.FromString,
+                )
 
 
 class KeyValueStoreServicer(object):
@@ -43,6 +53,19 @@ class KeyValueStoreServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def PutBytesStream(self, request_iterator, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetBytesStream(self, request, context):
+        """トレーラーメタデータを使い、ストリームの最後にメタデータを送信することが可能
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_KeyValueStoreServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -55,6 +78,16 @@ def add_KeyValueStoreServicer_to_server(servicer, server):
                     servicer.GetBytes,
                     request_deserializer=keyvalue__pb2.GetBytesRequest.FromString,
                     response_serializer=keyvalue__pb2.GetBytesReply.SerializeToString,
+            ),
+            'PutBytesStream': grpc.stream_unary_rpc_method_handler(
+                    servicer.PutBytesStream,
+                    request_deserializer=keyvalue__pb2.FileChunk.FromString,
+                    response_serializer=keyvalue__pb2.PutBytesReply.SerializeToString,
+            ),
+            'GetBytesStream': grpc.unary_stream_rpc_method_handler(
+                    servicer.GetBytesStream,
+                    request_deserializer=keyvalue__pb2.GetBytesRequest.FromString,
+                    response_serializer=keyvalue__pb2.FileChunk.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -98,5 +131,39 @@ class KeyValueStore(object):
         return grpc.experimental.unary_unary(request, target, '/keyvaluestore.KeyValueStore/GetBytes',
             keyvalue__pb2.GetBytesRequest.SerializeToString,
             keyvalue__pb2.GetBytesReply.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def PutBytesStream(request_iterator,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.stream_unary(request_iterator, target, '/keyvaluestore.KeyValueStore/PutBytesStream',
+            keyvalue__pb2.FileChunk.SerializeToString,
+            keyvalue__pb2.PutBytesReply.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetBytesStream(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_stream(request, target, '/keyvaluestore.KeyValueStore/GetBytesStream',
+            keyvalue__pb2.GetBytesRequest.SerializeToString,
+            keyvalue__pb2.FileChunk.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

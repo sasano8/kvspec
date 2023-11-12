@@ -5,6 +5,14 @@ from kvspec._grpc import keyvalue_pb2_grpc as stub
 from kvspec._grpc import keyvalue_pb2 as schema
 
 
+def send_hash_in_trailer(context, file_hash: str = ""):
+    """
+    ストリーミングでファイルを送信する場合、trailing_metadata（事後対応）でファイルのハッシュ値を送信可能。
+    これにより、クライアントはファイルを正常に受け取れたか検証できる。
+    """
+    metadata = [("file-hash", file_hash)]
+    context.set_trailing_metadata(metadata)
+
 class KeyValueStoreService(stub.KeyValueStoreServicer):
     def __init__(self, store: KeyValueClient):
         self.store = store

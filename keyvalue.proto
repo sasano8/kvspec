@@ -6,6 +6,10 @@ package keyvaluestore;
 service KeyValueStore {
   rpc PutBytes (PutBytesRequest) returns (PutBytesReply) {}
   rpc GetBytes (GetBytesRequest) returns (GetBytesReply) {}
+  rpc PutBytesStream (stream FileChunk) returns (PutBytesReply) {}
+
+  // トレーラーメタデータを使い、ストリームの最後にメタデータを送信することが可能
+  rpc GetBytesStream (GetBytesRequest) returns (stream FileChunk) {}
 }
 
 message PutBytesRequest {
@@ -15,6 +19,8 @@ message PutBytesRequest {
 
 message PutBytesReply {
   string key = 1;
+  // int64 size = 2;
+  // string hash = 3;
 }
 
 message GetBytesRequest {
@@ -23,4 +29,8 @@ message GetBytesRequest {
 
 message GetBytesReply {
   bytes value = 1;
+}
+
+message FileChunk {
+  bytes chunk = 1;
 }
