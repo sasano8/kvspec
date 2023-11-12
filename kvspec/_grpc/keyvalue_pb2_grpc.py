@@ -6,7 +6,7 @@ from . import keyvalue_pb2 as keyvalue__pb2
 
 
 class KeyValueStoreStub(object):
-    """サービス定義
+    """Interface for key-value store
     """
 
     def __init__(self, channel):
@@ -28,7 +28,7 @@ class KeyValueStoreStub(object):
 
 
 class KeyValueStoreServicer(object):
-    """サービス定義
+    """Interface for key-value store
     """
 
     def WriteBytes(self, request, context):
@@ -64,7 +64,7 @@ def add_KeyValueStoreServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class KeyValueStore(object):
-    """サービス定義
+    """Interface for key-value store
     """
 
     @staticmethod

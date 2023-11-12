@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package keyvaluestore;
 
-// サービス定義
+// Interface for key-value store
 service KeyValueStore {
   rpc WriteBytes (WriteBytesRequest) returns (WriteBytesReply) {}
   rpc ReadBytes (ReadBytesRequest) returns (ReadBytesReply) {}
