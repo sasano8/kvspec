@@ -4,12 +4,18 @@ package keyvaluestore;
 
 // Interface for key-value store
 service KeyValueStore {
+  rpc Exists (GetBytesRequest) returns (ExistsReply) {}
   rpc PutBytes (PutBytesRequest) returns (PutBytesReply) {}
   rpc GetBytes (GetBytesRequest) returns (GetBytesReply) {}
   rpc PutBytesStream (stream FileChunk) returns (PutBytesReply) {}
 
   // トレーラーメタデータを使い、ストリームの最後にメタデータを送信することが可能
   rpc GetBytesStream (GetBytesRequest) returns (stream FileChunk) {}
+}
+
+
+message ExistsReply {
+  bool result = 1;
 }
 
 message PutBytesRequest {

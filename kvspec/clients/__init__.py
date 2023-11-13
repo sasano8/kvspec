@@ -15,6 +15,10 @@ class KeyValueStoreGrpcClient:
     @staticmethod
     def get_schema():
         return schema
+    
+    def exists(self, key: str) -> bool:
+        res = self.stub.Exists(schema.GetBytesRequest(key=key))
+        return res.result
         
     def put_bytes(self, key: str, value: bytes) -> str:
         res = self.stub.PutBytes(schema.PutBytesRequest(key=key, value=value))

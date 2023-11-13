@@ -19,4 +19,7 @@ def test_get_bytes_stream(grpc_client: KeyValueStoreGrpcClient):
         result += chunk
         
     assert b"abcdef"
-    
+
+def test_exists(grpc_client: KeyValueStoreGrpcClient):
+    assert grpc_client.exists("nothing") == False
+    assert grpc_client.exists("test_put_bytes") == True
