@@ -21,7 +21,7 @@ class KeyValueStoreGrpcClient:
         return res.key
     
     def put_bytes_stream(self, key: str, stream: Iterable[bytes]) -> str:
-        res = self.stub.PutBytesStream(schema.FileChunk(chunk=chunk) for chunk in stream)
+        res = self.stub.PutBytesStream(schema.FileChunk(key=key, chunk=chunk) for chunk in stream)
         return res.key
     
     def get_bytes(self, key: str):
@@ -56,6 +56,6 @@ class KeyValueStoreGrpcClient:
         """
         
         
-        metadata = dict(self.channel.trailing_metadata())
-        file_size = metadata.get("file-size", "")
-        file_hash = metadata.get("file-hash", "")
+        # metadata = dict(self.channel.trailing_metadata())
+        # file_size = metadata.get("file-size", "")
+        # file_hash = metadata.get("file-hash", "")

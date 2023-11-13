@@ -32,5 +32,6 @@ message GetBytesReply {
 }
 
 message FileChunk {
-  bytes chunk = 1;
+  string key = 1;  // 保存先　１回目のkeyのみ有効
+  bytes chunk = 2;
 }

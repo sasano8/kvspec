@@ -22,8 +22,25 @@ class KeyValueStoreService(stub.KeyValueStoreServicer):
         return schema.PutBytesReply(key=request.key)
 
     def GetBytes(self, request, context):
-        result = self.store.get_bytes(request.key)
-        return schema.GetBytesReply(value=result)
+        value = self.store.get_bytes(request.key)
+        return schema.GetBytesReply(value=value)
+
+    def PutBytesStream(self, request, context):
+        it = iter(request)
+        first = next(it)
+        key: str = first.key
+        value: bytes = first.chunk
+        for req in it:
+            value += req.chunk
+        
+        # context.invocation_metadata().get('request-id')
+        self.store.put_bytes(key, value)  # ストリームに対応させる
+        # self.store.put_bytes_stream(stream)  # TODO: 現在の実装はちょっと意味が違う
+        return schema.PutBytesReply(key=key)
+
+    def GetBytesStream(self, request, context):
+        value = self.store.get_bytes(request.key)
+        yield schema.FileChunk(chunk=value)
 
 
 def get_grpc_server(client: KeyValueClient):
