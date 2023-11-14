@@ -1,4 +1,19 @@
+# development
+pytest
+black
+
+# options
+opencv-python
+
 grpcio
 grpcio-tools
-opencv-python
-pytest
+
+uvicorn
+fastapi
+
+strawberry-graphql
+
+# graphqlスキーマを出力するために必要
+libcst
+typer
+rich

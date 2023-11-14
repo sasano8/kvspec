@@ -13,3 +13,21 @@ make generate-grpc
 ```
 pytest -svx
 ```
+
+# serve
+
+Http(asgi)サーバーを起動します。
+
+```
+```
+
+GraphQLサーバーを起動します。
+
+```
+uvicorn kvspec.servers._graphql:app --reload
+```
+
+Grpcサーバーを起動します。
+
+```
+```

@@ -1,0 +1,9 @@
+type KeyValue {
+  key: String!
+  value: String!
+}
+
+type Query {
+  getText(key: String!): KeyValue!
+  getText2(key: String!): String
+}
