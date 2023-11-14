@@ -23,3 +23,10 @@ def test_get_bytes_stream(grpc_client: KeyValueStoreGrpcClient):
 def test_exists(grpc_client: KeyValueStoreGrpcClient):
     assert grpc_client.exists("nothing") == False
     assert grpc_client.exists("test_put_bytes") == True
+
+def test_delete(grpc_client: KeyValueStoreGrpcClient):
+    path = grpc_client.put_bytes("test_delete", b"")
+    assert grpc_client.exists(path)
+    assert grpc_client.delete(path)
+    assert not grpc_client.exists(path)
+    

@@ -20,6 +20,11 @@ class KeyValueStoreStub(object):
                 request_serializer=keyvalue__pb2.GetBytesRequest.SerializeToString,
                 response_deserializer=keyvalue__pb2.ExistsReply.FromString,
                 )
+        self.Delete = channel.unary_unary(
+                '/keyvaluestore.KeyValueStore/Delete',
+                request_serializer=keyvalue__pb2.GetBytesRequest.SerializeToString,
+                response_deserializer=keyvalue__pb2.ExistsReply.FromString,
+                )
         self.PutBytes = channel.unary_unary(
                 '/keyvaluestore.KeyValueStore/PutBytes',
                 request_serializer=keyvalue__pb2.PutBytesRequest.SerializeToString,
@@ -47,6 +52,12 @@ class KeyValueStoreServicer(object):
     """
 
     def Exists(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def Delete(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -82,6 +93,11 @@ def add_KeyValueStoreServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'Exists': grpc.unary_unary_rpc_method_handler(
                     servicer.Exists,
+                    request_deserializer=keyvalue__pb2.GetBytesRequest.FromString,
+                    response_serializer=keyvalue__pb2.ExistsReply.SerializeToString,
+            ),
+            'Delete': grpc.unary_unary_rpc_method_handler(
+                    servicer.Delete,
                     request_deserializer=keyvalue__pb2.GetBytesRequest.FromString,
                     response_serializer=keyvalue__pb2.ExistsReply.SerializeToString,
             ),
@@ -128,6 +144,23 @@ class KeyValueStore(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/keyvaluestore.KeyValueStore/Exists',
+            keyvalue__pb2.GetBytesRequest.SerializeToString,
+            keyvalue__pb2.ExistsReply.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def Delete(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/keyvaluestore.KeyValueStore/Delete',
             keyvalue__pb2.GetBytesRequest.SerializeToString,
             keyvalue__pb2.ExistsReply.FromString,
             options, channel_credentials,

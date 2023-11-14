@@ -1,4 +1,4 @@
-import os
+import os, shutil
 
 from .abstract import KeyValueClient
 
@@ -37,3 +37,19 @@ class LocalStorageClient(KeyValueClient):
         filepath = self.get_path(key)
         return os.path.isfile(filepath)
     
+    def delete(self, key) -> bool:
+        path = self.get_path(key)
+        if not os.path.exists(path):
+            return False
+
+        if os.path.isfile(path):
+            os.remove(path)
+            return True
+        elif os.path.isdir(path):
+            # ディレクトリが空でなければTrueを返すことにする
+            result = bool(os.listdir(path))
+            shutil.rmtree(path)
+            return result
+        else:
+            raise Exception()
+        

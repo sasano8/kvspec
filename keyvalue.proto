@@ -5,6 +5,7 @@ package keyvaluestore;
 // Interface for key-value store
 service KeyValueStore {
   rpc Exists (GetBytesRequest) returns (ExistsReply) {}
+  rpc Delete (GetBytesRequest) returns (ExistsReply) {}
   rpc PutBytes (PutBytesRequest) returns (PutBytesReply) {}
   rpc GetBytes (GetBytesRequest) returns (GetBytesReply) {}
   rpc PutBytesStream (stream FileChunk) returns (PutBytesReply) {}

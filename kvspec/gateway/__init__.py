@@ -20,6 +20,10 @@ class KeyValueStoreService(stub.KeyValueStoreServicer):
     def Exists(self, request, context):
         result = self.store.exists(request.key)
         return schema.ExistsReply(result=result)
+
+    def Delete(self, request, context):
+        result = self.store.delete(request.key)
+        return schema.ExistsReply(result=result)
     
     def PutBytes(self, request, context):
         self.store.put_bytes(request.key, request.value)

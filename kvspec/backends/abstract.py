@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Iterable, Tuple
 
+import uuid
+
 class KeyValueClient(ABC):
     @abstractmethod
     def get_substorage(self, relative_path):
@@ -15,6 +17,9 @@ class KeyValueClient(ABC):
     def exists(self, key) -> bool:
         raise NotImplementedError()
 
+    def delete(self, key) -> bool:
+        raise NotImplementedError()
+
     def get_bytes(self, key) -> bytes:
         raise NotImplementedError()
 
@@ -24,6 +29,21 @@ class KeyValueClient(ABC):
     def put_bytes_stream(self, stream: Iterable[Tuple[str, bytes]]):
         for key, value in stream:
             self.put_bytes(key, value)
+
+    def touch(self, key: str = None) -> str:
+        if key is None:
+            for i in range(3):
+                key = str(uuid.uuid4())
+                if self.exists(key):
+                    key = None
+                    continue
+                else:
+                    break
+            
+            if not key:
+                raise Exception("Failed generate uuid.")
+
+        return self.put_bytes(key, b"")
 
 
 class WrapperClient(KeyValueClient):
@@ -52,6 +72,9 @@ class WrapperClient(KeyValueClient):
         return self.client.put_bytes_stream(stream)
 
 class ReadOnlyClient(WrapperClient):
+    def delete(self, key):
+        raise NotImplementedError()
+    
     def put_bytes(self, key, value: bytes):
         raise NotImplementedError()
     
