@@ -45,6 +45,6 @@ def test_delete(grpc_client: KeyValueStoreGrpcClient):
 
 def test_ls(grpc_client: KeyValueStoreGrpcClient):
     assert grpc_client.ls("") == ["test_put_bytes", "test_put_bytes_stream"]
-    
+
     with pytest.raises(Exception):
         assert grpc_client.ls("test_put_bytes")

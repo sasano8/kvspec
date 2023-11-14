@@ -1,4 +1,5 @@
 import logging
+import grpc
 
 from kvspec.backends import KeyValueClient
 from kvspec._grpc import keyvalue_pb2_grpc as stub
@@ -54,9 +55,6 @@ class KeyValueStoreService(stub.KeyValueStoreServicer):
     def GetBytesStream(self, request, context):
         value = self.store.get_bytes(request.key)
         yield schema.FileChunk(chunk=value)
-
-
-import grpc
 
 
 class LoggingInterceptor(grpc.ServerInterceptor):
