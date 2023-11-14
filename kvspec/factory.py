@@ -2,7 +2,7 @@ from .backends import KeyValueClient
 from ._grpc import keyvalue_pb2_grpc as stub
 from ._grpc import keyvalue_pb2 as schema
 from .clients import KeyValueStoreGrpcClient
-from .gateway import get_grpc_server
+from .servers import get_grpc_server
 
     
 def get_grpc_core_client(channel):

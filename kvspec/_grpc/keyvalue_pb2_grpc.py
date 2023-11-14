@@ -57,7 +57,8 @@ class KeyValueStoreServicer(object):
     """
 
     def Ls(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """rpc Keys (GetBytesRequest) returns (LsReply) {}
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
