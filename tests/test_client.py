@@ -29,4 +29,6 @@ def test_delete(grpc_client: KeyValueStoreGrpcClient):
     assert grpc_client.exists(path)
     assert grpc_client.delete(path)
     assert not grpc_client.exists(path)
-    
+
+def test_ls(grpc_client: KeyValueStoreGrpcClient):
+    assert grpc_client.ls("") == ["test_put_bytes", "test_put_bytes_stream"]

@@ -13,6 +13,9 @@ class KeyValueClient(ABC):
 
     def as_writeonly(self):
         return WriteOnlyClient(self)
+    
+    def ls(self, key: str = "", order_name="asc", order_updated="asc") -> Iterable[str]:
+        raise NotImplementedError()
 
     def exists(self, key) -> bool:
         raise NotImplementedError()
@@ -29,6 +32,16 @@ class KeyValueClient(ABC):
     def put_bytes_stream(self, stream: Iterable[Tuple[str, bytes]]):
         for key, value in stream:
             self.put_bytes(key, value)
+            
+    def get_text(self, key) -> str:
+        return self.get_bytes(key).decode("utf-8")
+
+    def put_text(self, key, value: str):
+        return self.put_bytes(key, value.encode("utf-8"))
+    
+    def put_text_stream(self, stream: Iterable[Tuple[str, str]]):
+        for key, value in stream:
+            self.put_text(key, value)
 
     def touch(self, key: str = None) -> str:
         if key is None:

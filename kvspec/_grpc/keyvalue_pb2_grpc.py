@@ -15,6 +15,11 @@ class KeyValueStoreStub(object):
         Args:
             channel: A grpc.Channel.
         """
+        self.Ls = channel.unary_unary(
+                '/keyvaluestore.KeyValueStore/Ls',
+                request_serializer=keyvalue__pb2.GetBytesRequest.SerializeToString,
+                response_deserializer=keyvalue__pb2.LsReply.FromString,
+                )
         self.Exists = channel.unary_unary(
                 '/keyvaluestore.KeyValueStore/Exists',
                 request_serializer=keyvalue__pb2.GetBytesRequest.SerializeToString,
@@ -50,6 +55,12 @@ class KeyValueStoreStub(object):
 class KeyValueStoreServicer(object):
     """Interface for key-value store
     """
+
+    def Ls(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def Exists(self, request, context):
         """Missing associated documentation comment in .proto file."""
@@ -91,6 +102,11 @@ class KeyValueStoreServicer(object):
 
 def add_KeyValueStoreServicer_to_server(servicer, server):
     rpc_method_handlers = {
+            'Ls': grpc.unary_unary_rpc_method_handler(
+                    servicer.Ls,
+                    request_deserializer=keyvalue__pb2.GetBytesRequest.FromString,
+                    response_serializer=keyvalue__pb2.LsReply.SerializeToString,
+            ),
             'Exists': grpc.unary_unary_rpc_method_handler(
                     servicer.Exists,
                     request_deserializer=keyvalue__pb2.GetBytesRequest.FromString,
@@ -131,6 +147,23 @@ def add_KeyValueStoreServicer_to_server(servicer, server):
 class KeyValueStore(object):
     """Interface for key-value store
     """
+
+    @staticmethod
+    def Ls(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/keyvaluestore.KeyValueStore/Ls',
+            keyvalue__pb2.GetBytesRequest.SerializeToString,
+            keyvalue__pb2.LsReply.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def Exists(request,

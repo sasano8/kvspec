@@ -33,6 +33,16 @@ class LocalStorageClient(KeyValueClient):
         with open(filepath, "rb") as f:
             return f.read()
         
+    def ls(self, key: str = ""):
+        import time
+        path = self.get_path(key)
+        
+        # TODO: カレントディレクトリで返す値は異なるのだろうか？
+        for file_or_dir in os.listdir(path):
+            _ = self.get_path(file_or_dir)
+            if os.path.isfile(_):
+                yield file_or_dir
+        
     def exists(self, key) -> bool:
         filepath = self.get_path(key)
         return os.path.isfile(filepath)

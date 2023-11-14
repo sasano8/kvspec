@@ -16,6 +16,10 @@ def send_hash_in_trailer(context, file_hash: str = ""):
 class KeyValueStoreService(stub.KeyValueStoreServicer):
     def __init__(self, store: KeyValueClient):
         self.store = store
+
+    def Ls(self, request, context):
+        result = self.store.ls(request.key)
+        return schema.LsReply(keys=list(result))
         
     def Exists(self, request, context):
         result = self.store.exists(request.key)

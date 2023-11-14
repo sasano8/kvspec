@@ -4,6 +4,8 @@ package keyvaluestore;
 
 // Interface for key-value store
 service KeyValueStore {
+  // rpc Keys (GetBytesRequest) returns (LsReply) {}
+  rpc Ls (GetBytesRequest) returns (LsReply) {}
   rpc Exists (GetBytesRequest) returns (ExistsReply) {}
   rpc Delete (GetBytesRequest) returns (ExistsReply) {}
   rpc PutBytes (PutBytesRequest) returns (PutBytesReply) {}
@@ -14,6 +16,9 @@ service KeyValueStore {
   rpc GetBytesStream (GetBytesRequest) returns (stream FileChunk) {}
 }
 
+message LsReply {
+  repeated string keys = 1;
+}
 
 message ExistsReply {
   bool result = 1;

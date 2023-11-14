@@ -15,6 +15,10 @@ class KeyValueStoreGrpcClient:
     @staticmethod
     def get_schema():
         return schema
+
+    def ls(self, key: str = "") -> Iterable[str]:
+        res = self.stub.Ls(schema.GetBytesRequest(key=key))
+        return res.keys
     
     def exists(self, key: str) -> bool:
         res = self.stub.Exists(schema.GetBytesRequest(key=key))
