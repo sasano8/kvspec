@@ -12,6 +12,7 @@ uvicorn
 fastapi
 
 strawberry-graphql
+gql  # graphqlクライアント
 
 # graphqlスキーマを出力するために必要
 libcst
