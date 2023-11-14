@@ -7,7 +7,7 @@ from .local import LocalStorageClient
 class MockClient(KeyValueClient):
     def put_bytes(self, key, value: bytes):
         ...
-        
+
     def get_substorage(self, relative_path):
         return self
 
@@ -20,9 +20,10 @@ class PrintClient(MockClient):
 class ThreadSafeDictClient(KeyValueClient):
     def __init__(self, data: dict = None):
         import threading
+
         self.data = data or {}
         self.lock = threading.Lock()
-        
+
     def put_bytes(self, key, value: bytes):
         if not isinstance(value, bytes):
             raise Exception()
