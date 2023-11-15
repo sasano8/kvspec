@@ -59,6 +59,12 @@ class KeyValueClient(ABC):
 
         return self.put_bytes(key, b"")
 
+    def subscribe_bytes(self, key, interval: int = 1.0) -> Iterable[bytes]:
+        raise NotImplementedError()
+
+    def subscribe_text(self, key, interval: int = 1.0) -> Iterable[bytes]:
+        raise NotImplementedError()
+
 
 class WrapperClient(KeyValueClient):
     def __init__(self, client: KeyValueClient):

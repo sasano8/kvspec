@@ -5,13 +5,9 @@ from .abstract import KeyValueClient
 
 class LocalStorageClient(KeyValueClient):
     def __init__(self, root: str = "."):
-        import os
-
         self.root = os.path.abspath(root)
 
     def get_substorage(self, relative_path):
-        import os
-
         return self.__class__(os.path.join(self.root, relative_path))
 
     def get_path(self, key):
@@ -20,8 +16,6 @@ class LocalStorageClient(KeyValueClient):
     def put_bytes(self, key, value: bytes):
         if not key:
             raise Exception()
-
-        import os
 
         filepath = self.get_path(key)
         parent_dir = os.path.dirname(filepath)
@@ -37,8 +31,6 @@ class LocalStorageClient(KeyValueClient):
             return f.read()
 
     def ls(self, key: str = ""):
-        import time
-
         path = self.get_path(key)
 
         # TODO: カレントディレクトリで返す値は異なるのだろうか？
@@ -66,3 +58,19 @@ class LocalStorageClient(KeyValueClient):
             return result
         else:
             raise Exception()
+
+    def subscribe_bytes(self, key, interval: int = 1.0):
+        import time
+
+        while True:
+            if self.exists(key):
+                yield self.get_bytes(key)
+            time.sleep(interval)
+
+    def subscribe_text(self, key, interval: int = 1.0):
+        import time
+
+        while True:
+            if self.exists(key):
+                yield self.get_text(key)
+            time.sleep(interval)
