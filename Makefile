@@ -4,3 +4,6 @@ generate-grpc:
 
 generate-graphql:
 	@strawberry export-schema kvspec.servers._graphql:schema --output schema.graphql
+
+format:
+	@black . --extend-exclude "kvspec/_grpc/"
