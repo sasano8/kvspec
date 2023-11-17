@@ -1,0 +1,21 @@
+version: "3"
+
+services:
+  minio:
+    image: quay.io/minio/minio:latest
+    environment:
+      MINIO_ROOT_USER: administrator
+      MINIO_ROOT_PASSWORD: administrator
+    command: server --console-address ":9001" /data
+    ports:
+      - "9000:9000" # service
+      - "9001:9001" # web
+
+  ssh-server:
+    image: ssh-server
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "2222:22"
+  

@@ -8,6 +8,20 @@ def test_mock():
     mock_backend = Mock()
 
 
+def test_serialize():
+    from kvspec._grpc import keyvalue_pb2_grpc as stub
+    from kvspec._grpc import keyvalue_pb2 as schema
+
+    obj = schema.PutBytesReply(key="test")
+    # print(obj.key)
+    # print(obj.SerializeToString())
+    # print(schema.PutBytesReply.FromString(obj.SerializeToString()))
+
+    # class StreamMessage:
+    #     type: int = 1
+    #     body: bytes = b""
+
+
 def test_put_bytes(grpc_client: KeyValueStoreGrpcClient):
     assert grpc_client.put_bytes("test_put_bytes", b"value") == "test_put_bytes"
 
