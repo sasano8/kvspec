@@ -1,6 +1,9 @@
 from .abstract import DumperBase
 
+from kvspec.registry import builtins
 
+
+@builtins.dumper
 class BinaryDumper(DumperBase):
     content_type = "application/octet-stream"
 

@@ -2,7 +2,10 @@ from json import dumps as dump_json
 
 from .abstract import DumperBase
 
+from kvspec.registry import builtins
 
+
+@builtins.dumper
 class JsonlineDumper(DumperBase):
     content_type = "application/jsonlines"
 
