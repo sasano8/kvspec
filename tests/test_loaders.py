@@ -10,7 +10,7 @@ def test_parse_url():
 
 
 def test_loader():
-    from kvspec.loaders.abstract import parse_and_get_dumper
+    from kvspec.functions import parse_and_get_dumper
 
     dumper = parse_and_get_dumper(
         registry=None,
