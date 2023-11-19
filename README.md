@@ -216,3 +216,45 @@ Json Schema では、メタデータ（仮に`transform`とした）を付与す
   }
 }
 ```
+
+
+``` geojson
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+        "type": "Point", 
+        "coordinates": [-115.1701692, 36.1224053],
+        "properties": {
+          "name": "Las Vegas"
+        }
+    },
+    {
+        "type": "Point", 
+        "coordinates": [139.7725589, 35.6972466],
+        "properties": {
+          "name": "Tokyo"
+        }
+    },
+    {
+      "type": "Feature",
+      "id": 1,
+      "properties": {
+        "ID": 0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+              [-90,35],
+              [-90,30],
+              [-85,30],
+              [-85,35],
+              [-90,35]
+          ]
+        ]
+      }
+    }
+  ]
+}
+```
