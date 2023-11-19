@@ -88,7 +88,13 @@ graph TD
         X[Kvspec]
     end
 
-    subgraph "DataBridge"
+    subgraph "Transform"
+    end
+
+    subgraph "Serialize"
+    end
+
+    subgraph "IOBridge"
         I[Reader]
         K[Converter]
         J[Writer]
@@ -99,18 +105,28 @@ graph TD
         G[ObjectStorage]
         H[DatabaseTable]
         L[EventStream]
+        O[Http] <--> |Read/Write| Http
     end
 
     Http <-->|Request/Response| Application
-    Application <-->|Read/Write| DataBridge
-    DataBridge <-->|Read/Write| Infrastructure
+    Application <-->|Read/Write| Transform
+    Transform <-->|Read/Write| Serialize
+    Serialize <-->|Read/Write| IOBridge
+    IOBridge <-->|Read/Write| Infrastructure
 ```
+
+- Transform: 日付やジオメトリー型をシリアライズ可能な型に変換する層
+- Serialize: IOに対して読み書きする層
+- Infrastructure: 永続化の具体的な実装層
 
 ## データフォーマット
 
-データの取り扱いで問題となることが多いのは、日付とジオメトリーである。
+データの取り扱いで問題となることが多いのは、ストリーム処理における日付とジオメトリーである。
 調査した結果、GeoParquet が最も有望であると感じた。
 
+- 一般的な
+    - JSON: 広く知られたフォーマット
+    - JsonLine: JSONの行単位のフォーマット。Json は大規模データの場合、メモリを圧迫するが行毎に読み込むことで、メモリを節約できる。
 - 日付に関して
     - RFC3339(ISO 8601)形式のタイムスタンプを使用します。タイムスタンプの扱いに関して完全な標準は確立されておらず、IETF 標準化過程RFCでああるものの多くのプロジェクトで採用されています。
         - ISO 8601は多くの異なるフォーマットが許容されています
@@ -150,7 +166,7 @@ graph TD
         - WKB（Well-Known Binary）: WKT のバイナリ表現
         - BSON: MongoDBで採用されるJSONのバイナリ表現で、日付型や GeoJSON がサポートされています。
         - Shapefil: ジオメトリーを格納するためのファイルフォーマットですが、追加のメタデータを扱うには様々な制限があり、JSON などと比べて柔軟ではありません。
-        - Msgpack: JSONのバイナリ表現のようなフォーマットでJSONより高速です。ジオメトリーは直接サポートされていませんが、拡張型を使用することでサポートすることができます。
+        - Msgpack: JSONのバイナリ表現のようなフォーマットでJSONより高速です。ジオメトリーは直接サポートされていませんが、拡張型を使用することでサポートすることができます。連続して書き込むことで、jsonline のようなフォーマットにすることも可能。
         - FlatGeobuf: GeoJSONをprotocol buffers でシリアライズしたフォーマット。
         - Parquet: 列指向フォーマットで圧縮性、高速性などJSONより分析に適しています。直接ジオメトリーをサポートしていませんが、メタデータなどを使用して拡張することができます。
         - GeoParquet: OGC が推進するジオメトリーをサポートするParquetの拡張フォーマット。
@@ -175,3 +191,28 @@ Parquet は、日付型、ジオメトリー型をサポートしているが、
 
 - スキーマ情報を管理し、シリアライズ・デシリアライズの方法を明示的に定める
 - １行のParquet をデシリアライズ・シリアライズする（性能的には好ましくない）
+
+## スキーマ
+
+Confluent(kafka)でサポートされているスキーマは次の通り。
+
+- Protocol Buffers: メタデータの取り扱いで難あり
+- JSON Schema: Json の扱いで有効
+- Avro: 最近はあまり使われないようだ
+
+Json Schema では、メタデータ（仮に`transform`とした）を付与することができる。
+これにより、文字列からジオメトリー型に復元するか判断を行うことができる。
+
+```
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "geometry": {
+      "type": "string",
+      "transform": "wkt-to-geometry"
+      "description": "A geometry in Well-Known Text format"
+    }
+  }
+}
+```
