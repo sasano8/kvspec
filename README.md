@@ -207,16 +207,24 @@ Json Schema では、メタデータ（仮に`transform`とした）を付与す
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
+  "required": ["created_at", "geom"],
   "properties": {
-    "geometry": {
+    "created_at": {
+      "type": "float",
+      "cast": "datetime"
+      "description": "Unix timestamp",
+    },
+    "geom": {
       "type": "string",
-      "transform": "wkt-to-geometry"
-      "description": "A geometry in Well-Known Text format"
+      "cast": "geometry",
+      "description": "Geometry"
     }
   }
 }
 ```
 
+
+## Geometry
 
 ``` geojson
 {
