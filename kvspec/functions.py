@@ -90,8 +90,6 @@ def parse_and_get_dumper(
 #     params: dict
 
 
-
-
 {
     "url": "file://data.csv",
     "spec": {"type": "file", "path": "data.csv"},
@@ -115,7 +113,6 @@ def parse_and_get_dumper(
         # "return_type": "application/octet-stream"
     },
 }
-
 
 
 class DataConverterFrom:
