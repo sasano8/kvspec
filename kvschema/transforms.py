@@ -14,7 +14,9 @@ class Accepts:
 
 class IsoFormat(str):
     def to_timestamp(self) -> "Timestamp":
-        dt = self.to_datetime()
+        dt = datetime.fromisoformat(self)
+        if dt.tzinfo is None:
+            raise Exception(f"Must be aware datetime: {self}")
         return Timestamp(dt.timestamp())
 
     def to_datetime(self):
@@ -29,6 +31,13 @@ class IsoFormat(str):
             raise Exception(f"Must be aware datetime: {obj}")
         return cls(obj.isoformat())
 
+    @classmethod
+    def from_isoformat(cls, obj: str):
+        dt = datetime.fromisoformat(obj)
+        if dt.tzinfo is None:
+            raise Exception(f"Must be aware datetime: {obj}")
+        return cls(obj)
+
 
 class Timestamp(float):
     def to_isoformat(self) -> IsoFormat:
@@ -42,6 +51,10 @@ class Timestamp(float):
         if obj.tzinfo is None:
             raise Exception(f"Must be aware datetime: {obj}")
         return cls(obj.timestamp())
+
+    @classmethod
+    def from_isoformat(cls, obj: str):
+        return IsoFormat.to_timestamp(obj)
 
 
 class TimestampEncoder:
