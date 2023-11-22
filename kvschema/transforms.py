@@ -63,6 +63,57 @@ class TimestampEncoder:
         Accepts(int, float, datetime, Timestamp, IsoFormat, datetime, "PdTimestamp"),
     ]
 
+    def encode(self, obj):
+        if obj is None:
+            return None
+
+        types = {
+            "float": self.from_float,
+            "int": self.from_int,
+            "str": self.from_str,
+            "datetime": self.from_datetime,
+        }
+
+        if isinstance(obj, datetime):
+            t = "datetime"
+        elif isinstance(obj, str):
+            t = "str"
+        elif isinstance(obj, int):
+            t = "int"
+        elif isinstance(obj, float):
+            t = "float"
+        else:
+            raise Exception()
+
+        if func := types.get(t, None):
+            return func(obj)
+        else:
+            raise Exception()
+
+    def decode(self, to: str, obj):
+        if obj is None:
+            return None
+
+        if isinstance(obj, float):
+            ...
+        elif isinstance(obj, int):
+            obj = float(obj)
+        else:
+            raise Exception(obj)
+
+        types = {
+            "default": self.to_float,
+            "float": self.to_float,
+            "timestamp": self.to_timestamp,
+            "isoformat": self.to_isoformat,
+            "datetime": self.to_datetime,
+        }
+
+        if func := types.get(to, None):
+            return func(obj)
+        else:
+            raise Exception()
+
     def from_str(self, obj: str):
         return IsoFormat(obj).to_timestamp()
 

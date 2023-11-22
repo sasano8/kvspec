@@ -30,7 +30,7 @@ def test_timestamp():
     with pytest.raises(Exception, match="Must be aware datetime"):
         assert Timestamp.from_datetime(datetime(1970, 1, 1))
 
-    # encoder
+    # encoder.from_xxx
     encoder = TimestampEncoder()
 
     assert encoder.from_int(0.0) == BASE_FLOAT
@@ -42,6 +42,7 @@ def test_timestamp():
         encoder.from_datetime(datetime(1970, 1, 1, tzinfo=timezone.utc)) == BASE_FLOAT
     )
 
+    # encoder.to_xxx
     assert encoder.to_float(BASE_FLOAT) == BASE_FLOAT
     assert encoder.to_timestamp(BASE_FLOAT) == BASE_FLOAT
     assert encoder.to_isoformat(BASE_FLOAT) == "1970-01-01T00:00:00+00:00"
@@ -53,3 +54,17 @@ def test_timestamp():
 
     with pytest.raises(Exception, match="Must be aware datetime"):
         encoder.from_datetime(datetime(1970, 1, 1))
+
+    # encoder.encode
+    assert encoder.encode(BASE_FLOAT) == BASE_FLOAT
+    assert encoder.encode(int(BASE_FLOAT)) == BASE_FLOAT
+    assert encoder.encode(BASE_STR) == BASE_FLOAT
+    assert encoder.encode(BASE_DT) == BASE_FLOAT
+
+    # encoder.decode
+    assert encoder.decode("default", BASE_FLOAT) == BASE_FLOAT
+    assert encoder.decode("float", BASE_FLOAT) == BASE_FLOAT
+    assert encoder.decode("float", int(BASE_FLOAT)) == BASE_FLOAT
+    assert encoder.decode("timestamp", BASE_FLOAT) == BASE_FLOAT
+    assert encoder.decode("isoformat", BASE_FLOAT) == BASE_STR
+    assert encoder.decode("datetime", BASE_FLOAT) == BASE_DT
