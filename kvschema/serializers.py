@@ -48,18 +48,18 @@ class GeoDFSerializer:
         return gpd.read_parquet(f)
 
     @staticmethod
-    def from_geojson(f):
-        import geopandas as gpd
-
-        return gpd.read_file(f, driver="GeoJSON")
-
-    @staticmethod
     def to_parquet(f, obj):
         import geopandas as gpd
 
         if not isinstance(obj, gpd.GeoDataFrame):
             raise Exception()
         obj.to_parquet(f)
+
+    @staticmethod
+    def from_geojson(f):
+        import geopandas as gpd
+
+        return gpd.read_file(f, driver="GeoJSON")
 
     @staticmethod
     def to_geojson(f, obj):
@@ -69,6 +69,14 @@ class GeoDFSerializer:
             raise Exception()
 
         obj.to_file(f, driver="GeoJSON")
+    
+    @staticmethod
+    def from_postgresql(f):
+        raise NotImplementedError()
+
+    @staticmethod
+    def to_postgresql(f, obj):
+        raise NotImplementedError()
 
     @staticmethod
     def sample():
