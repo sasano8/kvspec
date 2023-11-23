@@ -3,32 +3,36 @@ import os
 
 class GeoDFSerializer:
     @staticmethod
-    def load(f, **kwargs):
+    def load(f, format: str = "", **kwargs):
         import geopandas as gpd
 
         if not isinstance(f, str):
             raise Exception()
 
-        _, ext = os.path.splitext(f)
+        _, ext = os.path.splitext(f)  # 拡張しの1文字目はドット
+        ext = format or ext[1:]
+
         funcs = {
-            ".parquet": GeoDFSerializer.from_parquet,
-            ".geojson": GeoDFSerializer.from_geojson,
+            "parquet": GeoDFSerializer.from_parquet,
+            "geojson": GeoDFSerializer.from_geojson,
         }
 
         loader = funcs.get(ext, gpd.read_file)
         return loader(f, **kwargs)
 
     @staticmethod
-    def dump(f, obj, **kwargs):
+    def dump(f, obj, format: str = "", **kwargs):
         import geopandas as gpd
 
         if not isinstance(f, str):
             raise Exception()
 
-        _, ext = os.path.splitext(f)
+        _, ext = os.path.splitext(f)  # 拡張しの1文字目はドット
+        ext = format or ext[1:]
+
         funcs = {
-            ".parquet": GeoDFSerializer.to_parquet,
-            ".geojson": GeoDFSerializer.to_geojson,
+            "parquet": GeoDFSerializer.to_parquet,
+            "geojson": GeoDFSerializer.to_geojson,
         }
 
         if ext not in funcs:
