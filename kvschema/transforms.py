@@ -141,50 +141,50 @@ class TimestampEncoder(
     core_type=float,
     accept_types=[int, float, str, datetime, Timestamp, IsoFormat],
 ):
-    @classmethod
-    def from_str(cls, obj: str):
+    @staticmethod
+    def from_str(obj: str):
         return IsoFormat(obj).to_timestamp()
 
     from_isoformat = from_str
 
-    @classmethod
-    def from_number(cls, obj: Union[int, float]):
+    @staticmethod
+    def from_number(obj: Union[int, float]):
         return Timestamp(obj)
 
-    @classmethod
-    def from_int(cls, obj: int):
+    @staticmethod
+    def from_int(obj: int):
         return Timestamp(obj)
 
-    @classmethod
-    def from_float(cls, obj: float):
+    @staticmethod
+    def from_float(obj: float):
         return Timestamp(obj)
 
     from_timestamp = from_float
 
-    @classmethod
-    def from_datetime(cls, obj: datetime):
+    @staticmethod
+    def from_datetime(obj: datetime):
         return Timestamp.from_datetime(obj)
 
-    @classmethod
-    def to_int(cls, obj: float):
+    @staticmethod
+    def to_int(obj: float):
         return int(obj)
 
-    @classmethod
-    def to_float(cls, obj: float):
+    @staticmethod
+    def to_float(obj: float):
         return Timestamp(obj)
 
-    @classmethod
-    def to_timestamp(cls, obj: float):
+    @staticmethod
+    def to_timestamp(obj: float):
         return Timestamp(obj)
 
-    @classmethod
-    def to_isoformat(cls, obj: float):
+    @staticmethod
+    def to_isoformat(obj: float):
         return Timestamp.to_isoformat(obj)
 
     to_str = to_isoformat
 
-    @classmethod
-    def to_datetime(cls, obj: float):
+    @staticmethod
+    def to_datetime(obj: float):
         return Timestamp.to_datetime(obj)
 
 
@@ -193,36 +193,36 @@ class GeometryEncoder(
     core_type=str,
     accept_types=[str, bytes, dict, "geometry"],
 ):
-    @classmethod
-    def from_str(cls, obj: str):
+    @staticmethod
+    def from_str(obj: str):
         raise NotImplementedError()
 
-    @classmethod
-    def from_bytes(cls, obj):
+    @staticmethod
+    def from_bytes(obj):
         raise NotImplementedError()
 
-    @classmethod
-    def from_dict(cls, obj):
+    @staticmethod
+    def from_dict(obj):
         raise NotImplementedError()
 
-    @classmethod
-    def from_geometry(cls, obj):
+    @staticmethod
+    def from_geometry(obj):
         raise NotImplementedError()
 
-    @classmethod
-    def to_geometry(cls, obj):
+    @staticmethod
+    def to_geometry(obj):
         raise NotImplementedError()
 
-    @classmethod
-    def to_str(cls, obj):
+    @staticmethod
+    def to_str(obj):
         raise NotImplementedError()
 
-    @classmethod
-    def to_bytes(cls, obj):
+    @staticmethod
+    def to_bytes(obj):
         raise NotImplementedError()
 
-    @classmethod
-    def to_dict(cls, obj):
+    @staticmethod
+    def to_dict(obj):
         raise NotImplementedError()
 
     from_wkt = from_str
