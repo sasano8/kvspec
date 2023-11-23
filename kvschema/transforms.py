@@ -1,6 +1,5 @@
 from datetime import datetime, timezone
-from typing import Union
-from typing_extensions import Annotated
+from typing import List, Literal, Type, Union
 
 
 class UnixTime(float):
@@ -57,40 +56,78 @@ class Timestamp(float):
         return IsoFormat.to_timestamp(obj)
 
 
-class TimestampEncoder:
-    raw: Annotated[
-        float,
-        Accepts(int, float, datetime, Timestamp, IsoFormat, datetime, "PdTimestamp"),
-    ]
+class AbstractEncoder:
+    def __init_subclass__(cls, core_type, accept_types: List[Union[str, Type]]) -> None:
+        def map_str(cls, prefix, t):
+            if isinstance(t, str):
+                name = t.lower()
+            elif isinstance(t, Type):
+                name = t.__name__.lower()
+            else:
+                raise Exception(t)
 
-    def encode(self, obj):
+            return name, getattr(cls, f"{prefix}{name}")
+
+        def get_mapper(cls, prefix: Literal["from_", "to_"], *types):
+            it = iter(types)
+
+            name, func = map_str(cls, prefix, next(it))
+
+            if prefix != "from_":
+                yield "default", func
+            yield name, func
+
+            for typ in it:
+                name, func = map_str(cls, prefix, typ)
+                yield name, func
+
+        def assert_not_duplicated(data: dict):
+            keys = set()
+
+            for k, v in data.items():
+                if k in keys:
+                    raise Exception(k)
+                else:
+                    keys.add(k)
+
+        cls.core_type = core_type
+        cls.encoders = dict(get_mapper(cls, "from_", core_type, *accept_types))
+        cls.decoders = dict(get_mapper(cls, "to_", core_type, *accept_types))
+
+        assert_not_duplicated(cls.encoders)
+        assert_not_duplicated(cls.decoders)
+
+    @classmethod
+    def inspect_cls(cls):
+        return {
+            "core_type": cls.core_type.__name__.lower(),
+            "encoders": list(cls.encoders.keys()),
+            "decodres": list(cls.decoders.keys()),
+        }
+
+    @classmethod
+    def encode(cls, obj):
         if obj is None:
             return None
 
-        types = {
-            "float": self.from_float,
-            "int": self.from_int,
-            "str": self.from_str,
-            "datetime": self.from_datetime,
-        }
-
         if isinstance(obj, datetime):
-            t = "datetime"
+            from_ = "datetime"
         elif isinstance(obj, str):
-            t = "str"
+            from_ = "str"
         elif isinstance(obj, int):
-            t = "int"
+            from_ = "int"
         elif isinstance(obj, float):
-            t = "float"
+            from_ = "float"
         else:
             raise Exception()
 
-        if func := types.get(t, None):
+        if func := cls.encoders.get(from_, None):
             return func(obj)
         else:
-            raise Exception()
+            raise Exception((from_, cls.encoders))
 
-    def decode(self, to: str, obj):
+    @classmethod
+    def decode(cls, to: str, obj):
         if obj is None:
             return None
 
@@ -101,44 +138,61 @@ class TimestampEncoder:
         else:
             raise Exception(obj)
 
-        types = {
-            "default": self.to_float,
-            "float": self.to_float,
-            "timestamp": self.to_timestamp,
-            "isoformat": self.to_isoformat,
-            "datetime": self.to_datetime,
-        }
-
-        if func := types.get(to, None):
+        if func := cls.decoders.get(to, None):
             return func(obj)
         else:
-            raise Exception()
+            raise Exception((to, cls.decoders))
 
-    def from_str(self, obj: str):
+
+class TimestampEncoder(
+    AbstractEncoder,
+    core_type=float,
+    accept_types=[int, float, str, datetime, Timestamp, IsoFormat],
+):
+    @classmethod
+    def from_str(cls, obj: str):
         return IsoFormat(obj).to_timestamp()
 
-    def from_number(self, obj: Union[int, float]):
+    from_isoformat = from_str
+
+    @classmethod
+    def from_number(cls, obj: Union[int, float]):
         return Timestamp(obj)
 
-    def from_int(self, obj: int):
+    @classmethod
+    def from_int(cls, obj: int):
         return Timestamp(obj)
 
-    def from_float(self, obj: float):
+    @classmethod
+    def from_float(cls, obj: float):
         return Timestamp(obj)
 
-    def from_datetime(self, obj: datetime):
+    from_timestamp = from_float
+
+    @classmethod
+    def from_datetime(cls, obj: datetime):
         return Timestamp.from_datetime(obj)
 
-    def to_float(self, obj: float):
+    @classmethod
+    def to_int(cls, obj: float):
+        return int(obj)
+
+    @classmethod
+    def to_float(cls, obj: float):
         return Timestamp(obj)
 
-    def to_timestamp(self, obj: float):
+    @classmethod
+    def to_timestamp(cls, obj: float):
         return Timestamp(obj)
 
-    def to_isoformat(self, obj: float):
+    @classmethod
+    def to_isoformat(cls, obj: float):
         return Timestamp.to_isoformat(obj)
 
-    def to_datetime(self, obj: float):
+    to_str = to_isoformat
+
+    @classmethod
+    def to_datetime(cls, obj: float):
         return Timestamp.to_datetime(obj)
 
 

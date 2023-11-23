@@ -31,7 +31,7 @@ def test_timestamp():
         assert Timestamp.from_datetime(datetime(1970, 1, 1))
 
     # encoder.from_xxx
-    encoder = TimestampEncoder()
+    encoder = TimestampEncoder
 
     assert encoder.from_int(0.0) == BASE_FLOAT
     assert encoder.from_float(0.0) == BASE_FLOAT
@@ -66,5 +66,6 @@ def test_timestamp():
     assert encoder.decode("float", BASE_FLOAT) == BASE_FLOAT
     assert encoder.decode("float", int(BASE_FLOAT)) == BASE_FLOAT
     assert encoder.decode("timestamp", BASE_FLOAT) == BASE_FLOAT
+    assert encoder.decode("str", BASE_FLOAT) == BASE_STR
     assert encoder.decode("isoformat", BASE_FLOAT) == BASE_STR
     assert encoder.decode("datetime", BASE_FLOAT) == BASE_DT
