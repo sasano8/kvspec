@@ -73,15 +73,15 @@ def test_timestamp():
 
 def test_serializer():
     import geopandas as gpd
-    from kvschema.serializers import GeoParquetSerializer
+    from kvschema.serializers import GeoDFSerializer
     from shapely.geometry.base import BaseGeometry
     from shapely import wkt
 
     BASE_DIR = "test_storage/"
 
-    df1 = GeoParquetSerializer.sample()
-    GeoParquetSerializer.dump(BASE_DIR + "geo1.parquet", df1)
-    df2 = GeoParquetSerializer.load(BASE_DIR + "geo1.parquet")
+    df1 = GeoDFSerializer.sample()
+    GeoDFSerializer.dump(BASE_DIR + "geo1.parquet", df1)
+    df2 = GeoDFSerializer.load(BASE_DIR + "geo1.parquet")
 
     row1 = df1.iloc[0]
     row2 = df2.iloc[0]
@@ -115,8 +115,8 @@ def test_serializer():
     df3 = df2.set_geometry("Center")
     assert df3.geometry.name == "Center"
 
-    GeoParquetSerializer.dump(BASE_DIR + "geo2.parquet", df3)
-    df4 = GeoParquetSerializer.load(BASE_DIR + "geo2.parquet")
+    GeoDFSerializer.dump(BASE_DIR + "geo2.parquet", df3)
+    df4 = GeoDFSerializer.load(BASE_DIR + "geo2.parquet")
 
     assert df4.geometry.name == "Center"
 

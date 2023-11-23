@@ -1,17 +1,70 @@
-class GeoParquetSerializer:
+import os
+
+
+class GeoDFSerializer:
     @staticmethod
-    def dump(f, obj):
+    def load(f, **kwargs):
         import geopandas as gpd
 
-        if isinstance(obj, gpd.GeoDataFrame):
-            obj.to_parquet(f)
-            # obj.to_file(f, driver="GeoJSON")
+        if not isinstance(f, str):
+            raise Exception()
+
+        _, ext = os.path.splitext(f)
+        funcs = {
+            ".parquet": GeoDFSerializer.from_parquet,
+            ".geojson": GeoDFSerializer.from_geojson,
+        }
+
+        loader = funcs.get(ext, gpd.read_file)
+        return loader(f, **kwargs)
 
     @staticmethod
-    def load(f):
+    def dump(f, obj, **kwargs):
+        import geopandas as gpd
+
+        if not isinstance(f, str):
+            raise Exception()
+
+        _, ext = os.path.splitext(f)
+        funcs = {
+            ".parquet": GeoDFSerializer.to_parquet,
+            ".geojson": GeoDFSerializer.to_geojson,
+        }
+
+        if ext not in funcs:
+            raise Exception()
+
+        dumper = funcs.get(ext)
+        return dumper(f, obj, **kwargs)
+
+    @staticmethod
+    def from_parquet(f):
         import geopandas as gpd
 
         return gpd.read_parquet(f)
+
+    @staticmethod
+    def from_geojson(f):
+        import geopandas as gpd
+
+        return gpd.read_file(f, driver="GeoJSON")
+
+    @staticmethod
+    def to_parquet(f, obj):
+        import geopandas as gpd
+
+        if not isinstance(obj, gpd.GeoDataFrame):
+            raise Exception()
+        obj.to_parquet(f)
+
+    @staticmethod
+    def to_geojson(f, obj):
+        import geopandas as gpd
+
+        if not isinstance(obj, gpd.GeoDataFrame):
+            raise Exception()
+
+        obj.to_file(f, driver="GeoJSON")
 
     @staticmethod
     def sample():
