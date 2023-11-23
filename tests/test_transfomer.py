@@ -3,7 +3,7 @@ import pytest
 
 def test_timestamp():
     from datetime import datetime, timezone
-    from kvschema.transforms import TimestampEncoder, IsoFormat, Timestamp
+    from kvschema.encoders import TimestampEncoder, IsoFormat, Timestamp
 
     BASE_FLOAT = datetime(1970, 1, 1, tzinfo=timezone.utc).timestamp()
     BASE_STR = "1970-01-01T00:00:00+00:00"
