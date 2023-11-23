@@ -2,15 +2,6 @@ from datetime import datetime, timezone
 from typing import List, Literal, Type, Union
 
 
-class UnixTime(float):
-    ...
-
-
-class Accepts:
-    def __init__(self, *types):
-        self.types = types
-
-
 class IsoFormat(str):
     def to_timestamp(self) -> "Timestamp":
         dt = datetime.fromisoformat(self)
@@ -94,6 +85,7 @@ class AbstractEncoder:
         cls.encoders = dict(get_mapper(cls, "from_", core_type, *accept_types))
         cls.decoders = dict(get_mapper(cls, "to_", core_type, *accept_types))
 
+        # TODO: 機能していない
         assert_not_duplicated(cls.encoders)
         assert_not_duplicated(cls.decoders)
 
@@ -196,49 +188,46 @@ class TimestampEncoder(
         return Timestamp.to_datetime(obj)
 
 
-def wkt_to_geometry(value: str = None):
-    if value is None:
-        return None
+class GeometryEncoder(
+    AbstractEncoder,
+    core_type=str,
+    accept_types=[str, bytes, dict, "geometry"],
+):
+    @classmethod
+    def from_str(cls, obj: str):
+        raise NotImplementedError()
 
-    raise Exception()
+    @classmethod
+    def from_bytes(cls, obj):
+        raise NotImplementedError()
 
+    @classmethod
+    def from_dict(cls, obj):
+        raise NotImplementedError()
 
-def geometry_to_wkt(value=None):
-    if value is None:
-        return None
+    @classmethod
+    def from_geometry(cls, obj):
+        raise NotImplementedError()
 
-    raise Exception()
+    @classmethod
+    def to_geometry(cls, obj):
+        raise NotImplementedError()
 
+    @classmethod
+    def to_str(cls, obj):
+        raise NotImplementedError()
 
-def date_to_iso(value: datetime = None):
-    if value is None:
-        return None
+    @classmethod
+    def to_bytes(cls, obj):
+        raise NotImplementedError()
 
-    if not isinstance(value, datetime):
-        raise Exception("Not datetime object.")
+    @classmethod
+    def to_dict(cls, obj):
+        raise NotImplementedError()
 
-    offset = value.utcoffset()
-    if offset is None:
-        raise Exception("Naive datetime is not allowed.")
-    elif not offset:
-        # offset == 0 つまり UTC
-        return value.isoformat()
-    else:
-        return value.astimezone(timezone.utc).isoformat()
-
-
-def date_to_timestamp(value: datetime = None):
-    if value is None:
-        return None
-
-    assert datetime(1, 1, 2).timestamp() == -62135543939.0
-    assert datetime(1, 1, 1).timestamp()  # ValueError: year 0 is out of range
-
-    raise Exception()
-
-
-def iso_to_date(value: str = None):
-    if value is None:
-        return None
-
-    raise Exception()
+    from_wkt = from_str
+    from_wkb = from_bytes
+    from_geojson = from_dict
+    to_wkt = to_str
+    to_wkb = to_bytes
+    to_geojson = to_dict
