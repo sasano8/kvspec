@@ -69,7 +69,7 @@ class GeoDFSerializer:
             raise Exception()
 
         obj.to_file(f, driver="GeoJSON")
-    
+
     @staticmethod
     def from_postgresql(f):
         raise NotImplementedError()
@@ -77,6 +77,33 @@ class GeoDFSerializer:
     @staticmethod
     def to_postgresql(f, obj):
         raise NotImplementedError()
+
+        def extract():
+            import geopandas
+            from geodatasets import get_path
+
+            path_to_data = get_path("nybb")
+            gdf = geopandas.read_file(path_to_data)
+            return gdf
+
+        def transform(gdf):
+            gdf = gdf.to_crs("EPSG:4326")
+            return gdf
+
+        def load(gdf):
+            from sqlalchemy import create_engine
+
+            engine = create_engine(
+                "postgresql://postgres:postgres@localhost:5432/postgres"
+            )
+            gdf.to_postgis(
+                "nybb", engine, if_exists="fail", chunksize=2000, schema="public"
+            )
+            # gdf.to_postgis("nybb", engine, if_exists="append", chunksize=2000, schema="public")
+
+        gdf = extract()
+        gdf = transform(gdf)
+        load(gdf)
 
     @staticmethod
     def sample():
