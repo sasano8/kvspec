@@ -4,7 +4,7 @@ from sys import stdout
 app = typer.Typer(no_args_is_help=True)
 
 
-@app.command("do")
+@app.command()
 def from_csv(src: str, dest: str = None):
     from kvschema.serializers import GeoDFSerializer
 

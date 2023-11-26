@@ -422,6 +422,30 @@ for v in gen:
 
 # cli
 
+入力ソースを出力ソースに送信する。
+
+
 ```
-python -m kvschema stream do test_storage/inputs/persons.csv
+python -m kvschema subscribe test_storage/inputs/persons.csv | python -m kvschema publish --dest stdout://
 ```
+
+
+# objet mapping matrix
+
+Pythonのメモリ空間にロードされたオブジェクトを標準出力やCSVに出力する場合、特殊なオブジェクトは次のように出力されます。
+型情報が失われるため、元の型にオブジェクトを復元したい場合は、スキーマ情報が必要になります。
+
+| 元の型 | 変換された型 | 表現 |
+| ---- | ---- | ---- |
+| datetime | string | isoformat |
+| timestamp | string | isoformat |
+| geometry | string | wkt |
+
+
+## type safe format
+
+型情報を含んだオブジェクトとしてのシリアライズ、型に適用したオブジェクトへのデシリアライズには次のファイル形式を利用してください。
+
+| ファイル形式 | 備考 |
+| ---- | ---- |
+| parquet |  |
