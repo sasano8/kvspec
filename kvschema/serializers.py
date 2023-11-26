@@ -43,6 +43,9 @@ class GeoDFSerializer:
 
     @staticmethod
     def from_parquet(f):
+        """
+        pandasでgeometryを含むparquetを読み込むと、geometry列はwkb形式となる。
+        """
         import geopandas as gpd
 
         return gpd.read_parquet(f)
@@ -60,6 +63,21 @@ class GeoDFSerializer:
         import geopandas as gpd
 
         return gpd.read_file(f, driver="GeoJSON")
+
+    @staticmethod
+    def from_csv(f):
+        import pandas as pd
+
+        return pd.read_csv(f)
+
+    @staticmethod
+    def to_jsonline(f, obj):
+        import pandas as pd
+
+        if not isinstance(obj, pd.DataFrame):
+            raise Exception()
+
+        return obj.to_json(f, orient="records", force_ascii=False, lines=True)
 
     @staticmethod
     def to_geojson(f, obj):

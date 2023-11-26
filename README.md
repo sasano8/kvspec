@@ -266,3 +266,162 @@ Json Schema では、メタデータ（仮に`transform`とした）を付与す
   ]
 }
 ```
+
+
+# 参考
+
+Kafka Connect
+
+- AvroConverter
+- ProtobufConverter
+- JsonSchemaConverter
+- JsonConverter
+- StringConverter
+- ByteArrayConverter
+
+# fomart
+
+{
+  "envirnonment": {
+    "dev": {
+      "type": "docker-compose",
+      "params": {
+        "file": "docker-compose.override.dev.yml",
+        "entrypoint": "python -m kvspec.servers._http",
+        "args": [
+          "--host",
+          "0.0.0.0"
+        ]
+      }
+    }
+  },
+  "connectors": {
+    "db": "postgresql://admin:admin@localhost/admin"
+  },
+  "schema": {
+    "world": {
+      "type": "object",
+      "required": ["created_at", "geom"],
+      "properties": {
+        "created_at": {
+          "type": "float",
+          "subtype": "datetime",
+          "description": "Unix timestamp"
+        },
+        "geom": {
+          "type": "string",
+          "subtype": "geometry",
+          "description": "Geometry"
+        }
+      }
+    }
+  },
+  "srcs": {
+    "mycsv": {
+      "description": "",
+      "path": "data/persons.csv",
+      "type": "csv",
+      "schema": "world"
+    },
+    "db": {
+      "type": "postgres",
+      "conenctor": "db",
+      "schema": "public",
+      "table": "users"
+    }
+  },
+  "dests": {
+    "alias": "myjsonl",
+    "description": "",
+    "path": "data/persons.jsonl",
+    "type": "jsonl",
+    "params": {
+      "header": true
+    }
+  },
+  "pipleline": [
+    {
+      "alias": "csv_to_jsonl",
+      "loader": {
+        "type": "GeoPandas",
+        "srcs": ["mycsv"],
+        "dests": ["stdout"]
+      }
+    }
+  ]
+}
+
+
+# コマンドライン
+
+pipleline:
+	- alias: csv_to_jsonl
+  	loader:
+    	type: GeoPandas
+    	src: mycsv
+    	dest: myjsonl
+
+```
+cli src list
+cli dest list
+cli loader --type GeoPandas --schema world --src_path "data/persons.csv" --dest_path "data/persons.jsonl"
+```
+
+```
+with Observable as thread:
+  thread.from(KafkaTopic())
+  .map(schema_validator)
+  .subscribe(x => console.log(x));
+
+  thread.from(KafkaTopic())
+  .map(schema_validator)
+  .subscribe(x => console.log(x));
+
+  thread.wait()
+```
+
+streamzが参考になる
+
+```
+dest1 = KafkaTopic("topic1")
+dest2 = KafkaTopic("topic2")
+publish = Dispatcher(dest1, dest2)
+balancer = LoadBalancer(dest1, dest2)
+
+stream = Stream()
+
+stream.map(lambda x: x + 1).sink(publish)
+
+# dest1, dest2 にデータを送信します。
+stream.emit(1)
+gen.send(value)
+
+for v in gen:
+  gen.send(1)
+```
+
+
+
+```
+{
+  "type": "introspectionResponse",
+  "resultCode": "A056001",
+  "resultMessage": "[A056001] The access token is valid.",
+  "action": "OK",
+  "clientId": ...,
+  "expiresAt": ...,
+  "responseContent": "Bearer error=\"invalid_request\"",
+  "scopes": [
+    "payment": {
+      "actions": ["create", "read", "update", "delete"]
+    }
+  ],
+  "subject": "testuser01"
+}
+```
+
+# cli
+
+```
+python -m kvschema stream do test_storage/inputs/persons.csv
+```
