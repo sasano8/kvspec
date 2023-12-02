@@ -71,6 +71,13 @@ class GeoDFSerializer:
         return pd.read_csv(f)
 
     @staticmethod
+    def to_csv(f, obj):
+        raise Exception("ヘッダーなどの問題で運用が難しいので禁止")
+        import pandas as pd
+
+        return obj.to_csv(f, index=False)
+
+    @staticmethod
     def to_jsonline(f, obj):
         import pandas as pd
 
@@ -87,6 +94,14 @@ class GeoDFSerializer:
             raise Exception()
 
         obj.to_file(f, driver="GeoJSON")
+
+    @staticmethod
+    def from_cbor(f):
+        raise NotImplementedError()
+
+    @staticmethod
+    def to_cbor(f, obj):
+        raise NotImplementedError()
 
     @staticmethod
     def from_postgresql(f):
@@ -122,6 +137,14 @@ class GeoDFSerializer:
         gdf = extract()
         gdf = transform(gdf)
         load(gdf)
+
+    @staticmethod
+    def from_orc(f):
+        raise NotImplementedError()
+
+    @staticmethod
+    def to_orc(f):
+        raise NotImplementedError()
 
     @staticmethod
     def sample():

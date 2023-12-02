@@ -10,3 +10,4 @@ app = typer.Typer(no_args_is_help=True)
 app.command("subscribe")(from_csv)
 app.command("publish")(from_stdin)
 app.command("transfer")(lambda: None)  # その他命名候補: load
+app.command("inspect")(lambda: None)
