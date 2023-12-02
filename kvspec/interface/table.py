@@ -14,10 +14,10 @@ class ITable(Generic[T]):
     async def upsert(self, **obj) -> T:
         raise NotImplementedError()
 
-    async def get(self, key) -> T:
+    async def get(self, key: str) -> T:
         raise NotImplementedError()
 
-    async def delete(self, key) -> int:
+    async def delete(self, key: str) -> int:
         raise NotImplementedError()
 
     async def keys(self) -> AsyncIterator[str]:
@@ -40,7 +40,7 @@ class ITable(Generic[T]):
         raise NotImplementedError()
 
 
-class DictTable:
+class DictTable(ITable[dict]):
     selector = None
     publisher = None
     schema = None
@@ -72,7 +72,7 @@ class DictTable:
     def __init_subclass__(cls, selector, publisher, schema) -> None:
         cls.selector = staticmethod(selector)
         cls.publisher = staticmethod(publisher)
-        cls.schema = staticmethod(publisher)
+        cls.schema = staticmethod(schema)
 
     async def insert(self, **obj):
         try:
@@ -133,7 +133,6 @@ class DictTable:
 
     async def commit(self):
         ...
-
 
 async def sample():
     def select_id(obj):
