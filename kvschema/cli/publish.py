@@ -3,6 +3,7 @@ from sys import stdout, stdin
 import sys
 
 import typer
+from time import sleep
 
 
 app = typer.Typer(no_args_is_help=True)

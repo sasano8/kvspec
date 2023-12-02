@@ -1,7 +1,44 @@
 from uuid import uuid4
 from contextlib import asynccontextmanager
+from typing import Generic, TypeVar, AsyncIterator
+
+T = TypeVar("T")
 
 Undefined = object()
+
+
+class ITable(Generic[T]):
+    async def insert(self, **obj) -> T:
+        raise NotImplementedError()
+
+    async def upsert(self, **obj) -> T:
+        raise NotImplementedError()
+
+    async def get(self, key) -> T:
+        raise NotImplementedError()
+
+    async def delete(self, key) -> int:
+        raise NotImplementedError()
+
+    async def keys(self) -> AsyncIterator[str]:
+        raise NotImplementedError()
+
+    async def values(self) -> AsyncIterator[T]:
+        raise NotImplementedError()
+
+    async def items(self) -> AsyncIterator[str, T]:
+        raise NotImplementedError()
+
+    @asynccontextmanager
+    async def transaction(self):
+        raise NotImplementedError()
+
+    async def commit(self):
+        raise NotImplementedError()
+
+    def query(self):
+        raise NotImplementedError()
+
 
 class DictTable:
     selector = None
@@ -14,22 +51,24 @@ class DictTable:
             raise Exception()
 
     @classmethod
-    def create_store(cls, store: dict, selector = None, publisher = None, schema = None):
+    def create_store(cls, store: dict, selector=None, publisher=None, schema=None):
         selector = selector or cls.selector
         publisher = publisher or cls.publisher
         schema = schema or cls.schema
 
-        class TempStore(DictTable, selector=selector, publisher=publisher, schema=schema):
+        class TempStore(
+            DictTable, selector=selector, publisher=publisher, schema=schema
+        ):
             ...
-            
+
         return TempStore(store)
-        
+
     def __str__(self):
         return self.db.__str__()
-        
+
     def __repr__(self):
         return self.db.__repr__()
-        
+
     def __init_subclass__(cls, selector, publisher, schema) -> None:
         cls.selector = staticmethod(selector)
         cls.publisher = staticmethod(publisher)
@@ -47,7 +86,7 @@ class DictTable:
                 raise KeyError("duplicate")
             self.db[key] = obj
             return obj
-        else:    
+        else:
             while True:
                 self.publisher(obj)
                 key = self.selector(obj)
@@ -55,7 +94,7 @@ class DictTable:
                     break
             self.db[key] = obj
             return obj
-        
+
     async def upsert(self, **obj):
         try:
             key = self.selector(obj)
@@ -79,7 +118,7 @@ class DictTable:
     async def keys(self):
         async for key in self.db.keys():
             yield key
-        
+
     async def values(self):
         async for value in self.db.values():
             yield value
@@ -87,11 +126,11 @@ class DictTable:
     async def items(self):
         async for key, value in self.db.items():
             yield key, value
-    
+
     @asynccontextmanager
     async def transaction(self):
         yield self
-        
+
     async def commit(self):
         ...
 
@@ -103,17 +142,13 @@ async def sample():
     def publish_key_by_uuid4(obj):
         obj["id"] = str(uuid4())
 
-
     class SelectableStore2(
-        DictTable,
-        selector=select_id,
-        publisher=publish_key_by_uuid4,
-        schema=None
+        DictTable, selector=select_id, publisher=publish_key_by_uuid4, schema=None
     ):
         ...
 
     store = SelectableStore2()
-    
+
     async with store.transaction() as tr:
         await tr.insert()
         await tr.insert(id="1")
