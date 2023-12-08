@@ -16,7 +16,7 @@
         header_up X-Forwarded-Proto {http.request.scheme}
     }
 
-    header Cache-Control "max-age=10"
+    header Cache-Control "max-age=3600"
 
 }
 

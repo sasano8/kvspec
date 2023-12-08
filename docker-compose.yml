@@ -19,10 +19,41 @@ services:
     environment:
       MINIO_ROOT_USER: administrator
       MINIO_ROOT_PASSWORD: administrator
+      MINIO_SERVER_URL: "http://localhost:9000"
     command: server --console-address ":9001" /data
     ports:
       - "9000:9000" # service
       - "9001:9001" # web
+
+  minio-init:
+    depends_on:
+      - minio
+    image: minio/mc
+    volumes:
+      - ./shared:/mnt/shared
+    entrypoint: >
+      /bin/sh -c "
+      echo [INFO] Setup connection to MinIO;
+      mc alias set myminio http://minio:9000 administrator administrator;
+      mc admin info myminio;
+
+      echo [INFO] Create default buckets;
+      mc mb --ignore-existing --with-versioning myminio/public;
+      mc mb --ignore-existing --with-versioning myminio/internal;
+      mc mb --ignore-existing --with-versioning myminio/private;
+      mc anonymous set download myminio/public;
+
+      echo [INFO] Cleanup buckets;
+      mc rm --recursive --force --dangerous myminio/public;
+      mc rm --recursive --force --dangerous myminio/internal;
+      mc rm --recursive --force --dangerous myminio/private;
+
+      echo [INFO] Uploading files;
+      mc cp --recursive /mnt/shared/public/* myminio/public;
+      mc cp --recursive /mnt/shared/internal/* myminio/internal;
+      mc cp --recursive /mnt/shared/private/* myminio/private;
+      exit 0;
+      "
 
   ssh-server:
     image: ssh-server
