@@ -1,6 +1,19 @@
 version: "3"
 
 services:
+  caddy:
+    image: caddy
+    ports:
+      - "80:80"
+      - "443:443"
+      - "2019:2019"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      # - ./data/caddy:/data
+      # - ./data/caddy/config:/config
+      # - ./data/caddy/data:/data
+      # - ./data/caddy/tls:/tls
+
   minio:
     image: quay.io/minio/minio:latest
     environment:
@@ -16,8 +29,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:    
+        USER_NAME: "root"
+        USER_PASS: "pass"
     ports:
-      - "2222:22"
+      - "9200:22"
   
   postgres:
     image: postgis/postgis

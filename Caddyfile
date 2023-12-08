@@ -1,0 +1,27 @@
+:80 {
+    log {
+        output stdout
+        format json
+        level DEBUG
+    }
+
+    uri path_regexp /$ /index.html
+
+    # minioがリダイレクトを要求する場合に、バックエンドのパス（minio）が漏洩する
+    reverse_proxy * http://minio:9000 {
+        header_up Host {http.reverse_proxy.upstream.hostport}
+        header_up X-Real-IP {http.request.remote}
+        header_up X-Forwarded-For {http.request.remote}
+        header_up X-Forwarded-Port {http.request.port}
+        header_up X-Forwarded-Proto {http.request.scheme}
+    }
+
+    header Cache-Control "max-age=10"
+
+}
+
+
+# mc alias set myminio http://localhost:9000 administrator administrator
+# mc admin info myminio
+# mc mb --ignore-existing --with-versioning myminio/site
+# mc anonymous set download myminio/site  # site バケットにread権限を付与
