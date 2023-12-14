@@ -13,6 +13,9 @@ services:
       # - ./data/caddy/config:/config
       # - ./data/caddy/data:/data
       # - ./data/caddy/tls:/tls
+    environment:
+      CADDY_HOST: "127-0-0-1.nip.io"
+      TLS_CONFIG: "tls internal"  # 自己署名証明書を使う。Let's Encryptを使う場合は空白にする。
 
   minio:
     image: quay.io/minio/minio:latest
@@ -79,7 +82,13 @@ services:
 
       POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
       # POSTGRES_HOST_AUTH_METHOD: trust
-    # psql -h localhost -p 5432 -U postgres -d postgres
+
+  # meilisearch:
+  #   image: getmeili/meilisearch:latest
+  #   ports:
+  #     - 7700:7700
+  #   environment:
+  #     MEILI_MASTER_KEY: "masterKey"
   
   zookeeper:
     image: 'bitnami/zookeeper:latest'
@@ -99,11 +108,18 @@ services:
       - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
     depends_on:
       - zookeeper
-
-  # meilisearch:
-  #   image: getmeili/meilisearch:latest
-  #   ports:
-  #     - 7700:7700
-  #   environment:
-  #     MEILI_MASTER_KEY: "masterKey"
   
+  debezium:
+    image: "debezium/connect:2.0"
+    ports:
+      - "8083:8083"
+    environment:
+      - BOOTSTRAP_SERVERS=kafka:9092
+      - GROUP_ID=1
+      - CONFIG_STORAGE_TOPIC=_kafka_connect_configs
+      - OFFSET_STORAGE_TOPIC=_kafka_connect_offsets
+      - STATUS_STORAGE_TOPIC=_kafka_connect_statuses
+    depends_on:
+      - zookeeper
+      - kafka
+      - postgres
